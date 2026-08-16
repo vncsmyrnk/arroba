@@ -11,7 +11,6 @@ stow() {
     echo "$output"
     return 1
   fi
-  conflicting_files=("${conflicting_files[@]#*/}")
   printf "%s" "${conflicting_files[@]}"
   return 1
 }
@@ -39,10 +38,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 config=$(cat "$CONFIG_PATH/$src.json" 2>/dev/null || echo '{}')
-if ! stow_target=$(jq -cre '.stow' <<<"$config" 2>/dev/null || echo "$HOME"); then
-  exit 1
+if ! stow_target=$(jq -cre '.stow' <<<"$config" 2>/dev/null); then
+  stow_target="$HOME"
+else
+  stow_target=$(envsubst <<<"$stow_target")
 fi
-stow_target=$(envsubst <<<"$stow_target")
 
 target_name="$UTILITIES_CRYPTSETUP_PREFIX$src"
 if ! mountpoint=$(
@@ -58,8 +58,10 @@ _stow+=(
 if ! conflicts=$("${_stow[@]}" 2>&1); then
   tmp=$(mktemp -d -t utilities-cryptsetup-stow-conflicting.XXXX)
   while read -r conflict; do
-    mv -i "$stow_target/$conflict" "$tmp"
-  done <<<"$conflicts"
+    file="$stow_target/$conflict"
+    cp --parents "$file" "$tmp"
+    rm -f "$file"
+  done < <(grep -oP ".+$mountpoint/\K.+" <<<"$conflicts")
   echo "conflicting files moved to $tmp." >&2
   "${_stow[@]}"
 fi
