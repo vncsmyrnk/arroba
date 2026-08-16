@@ -31,6 +31,7 @@
       tmuxJobList = pkgs.callPackage ./src/tmux-job-list { };
       tmuxJobKill = pkgs.callPackage ./src/tmux-job-kill { };
       tmuxJobKillAll = pkgs.callPackage ./src/tmux-job-kill-all { };
+      tmuxSplitPane = pkgs.callPackage ./src/tmux-split-pane { };
       oathtoolTotpGenerate = pkgs.callPackage ./src/oathtool-totp-generate { };
       oathtoolTotpList = pkgs.callPackage ./src/oathtool-totp-list { };
       cryptsetupMount = pkgs.callPackage ./src/cryptsetup-mount { };
@@ -49,6 +50,7 @@
           tmuxJobList
           tmuxJobKill
           tmuxJobKillAll
+          tmuxSplitPane
           oathtoolTotpGenerate
           oathtoolTotpList
           cryptsetupMount
