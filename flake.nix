@@ -27,6 +27,7 @@
 
       gitWorktreeCd = pkgs.callPackage ./src/git-worktree-cd { };
       sopsExecEnv = pkgs.callPackage ./src/sops-exec-env { };
+      sopsEdit = pkgs.callPackage ./src/sops-edit { };
       tmuxJobRun = pkgs.callPackage ./src/tmux-job-run { };
       tmuxJobList = pkgs.callPackage ./src/tmux-job-list { };
       tmuxJobKill = pkgs.callPackage ./src/tmux-job-kill { };
@@ -46,6 +47,7 @@
         paths = [
           gitWorktreeCd
           sopsExecEnv
+          sopsEdit
           tmuxJobRun
           tmuxJobList
           tmuxJobKill
