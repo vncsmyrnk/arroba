@@ -16,7 +16,7 @@ if [[ ! -x "$job_path" ]]; then
   exit 1
 fi
 
-if ! job_content=$(cat "$job_path"); then
+if ! cat "$job_path" >/dev/null 2>&1; then
   echo "failed to read job file." >&2
   exit 1
 fi
@@ -26,9 +26,14 @@ if tmux list-panes -t "$session_name":"$job_name" >/dev/null 2>&1; then
   exit 1
 fi
 
+tmux_args=(
+  '-n' "$job_name"
+  "PATH=$CURRENT_PATH;$job_path"
+)
 if ! tmux list-windows -t "$session_name" >/dev/null 2>&1; then
-  tmux new-session -d -s "$session_name" -n "$job_name" "$job_content"
-  exit 0
+  tmux_args=('new-session' '-d' '-s' "$session_name" "${tmux_args[@]}")
+else
+  tmux_args=('new-window' '-t' "$session_name" "${tmux_args[@]}")
 fi
 
-tmux new-window -t "$session_name" -n "$job_name" "$job_content"
+tmux "${tmux_args[@]}"
