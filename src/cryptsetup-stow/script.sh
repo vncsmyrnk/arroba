@@ -39,7 +39,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 config=$(cat "$CONFIG_PATH/$src.json" 2>/dev/null || echo '{}')
-if ! stow_target=$(jq -cre '.stow' <<<"$config" 2>/dev/null || "$HOME"); then
+if ! stow_target=$(jq -cre '.stow' <<<"$config" 2>/dev/null || echo "$HOME"); then
   exit 1
 fi
 stow_target=$(envsubst <<<"$stow_target")
