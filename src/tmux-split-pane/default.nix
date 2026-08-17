@@ -1,22 +1,34 @@
 {
+  stdenvNoCC,
   lib,
   pkgs,
 }:
 
-pkgs.writeShellScriptBin "tmux-split-pane" ''
-  export PATH="${
-    lib.makeBinPath [
-      pkgs.tmux
-    ]
-  }"
-  if ! current_pane_id=$(tmux list-panes -F '#{pane_id}' -f '#{m:1,#{pane_active}}'); then
-    echo "failed to fetch current pane id." >&2
-  fi
+stdenvNoCC.mkDerivation {
+  pname = "tmux-split-pane";
+  version = "0.1.0";
 
-  tmux split-window -h
-  tmux split-window -v
+  src = ./.;
+  nativeBuildInputs = with pkgs; [
+    installShellFiles
+    makeWrapper
+  ];
 
-  if [[ -n "$current_pane_id" ]]; then
-    tmux select-pane -t "$current_pane_id"
-  fi
-''
+  doCheck = true;
+  checkInputs = with pkgs; [ shellcheck ];
+  checkPhase = ''
+    shellcheck ${./script.sh}
+  '';
+
+  installPhase = ''
+    patchShebangs .
+    install -Dm755 ${./script.sh} $out/bin/tmux-split-pane
+    wrapProgram $out/bin/tmux-split-pane \
+      --run 'export CURRENT_PATH="$PATH"' \
+      --set PATH ${
+        lib.makeBinPath [
+          pkgs.tmux
+        ]
+      }
+  '';
+}
