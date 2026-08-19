@@ -25,14 +25,16 @@
         ];
       };
 
+      pathPreserve = pkgs.callPackage ./src/path-preserve { };
+
       gitWorktreeCd = pkgs.callPackage ./src/git-worktree-cd { };
-      sopsExecEnv = pkgs.callPackage ./src/sops-exec-env { };
-      sopsEdit = pkgs.callPackage ./src/sops-edit { };
+      sopsExecEnv = pkgs.callPackage ./src/sops-exec-env { inherit pathPreserve; };
+      sopsEdit = pkgs.callPackage ./src/sops-edit { inherit pathPreserve; };
       tmuxJobRun = pkgs.callPackage ./src/tmux-job-run { };
       tmuxJobList = pkgs.callPackage ./src/tmux-job-list { };
       tmuxJobKill = pkgs.callPackage ./src/tmux-job-kill { };
       tmuxJobKillAll = pkgs.callPackage ./src/tmux-job-kill-all { };
-      tmuxSplitPane = pkgs.callPackage ./src/tmux-split-pane { };
+      tmuxSplitPane = pkgs.callPackage ./src/tmux-split-pane { inherit pathPreserve; };
       oathtoolTotpGenerate = pkgs.callPackage ./src/oathtool-totp-generate { };
       oathtoolTotpList = pkgs.callPackage ./src/oathtool-totp-list { };
       cryptsetupMount = pkgs.callPackage ./src/cryptsetup-mount { };
